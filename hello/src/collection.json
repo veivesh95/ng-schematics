@@ -4,6 +4,26 @@
     "hello": {
       "description": "A blank schematic.",
       "factory": "./hello/index#hello"
+    },
+    "my-collection": {
+      "description": "A blank schematic.",
+      "factory": "./my-collection/index#myCollection"
+    },
+    "file-creator": {
+      "description": "A blank schematic.",
+      "factory": "./file-creator/index#fileCreator",
+      "schema": "./file-creator/schema.json",
+      "aliases": [
+        "fc"
+      ]
+    },
+    "create-from-template": {
+      "description": "A blank schematic.",
+      "factory": "./create-from-template/index#createFromTemplate",
+      "schema": "./create-from-template/schema.json",
+      "aliases": [
+        "cft"
+      ]
     }
   }
 }
