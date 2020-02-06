@@ -1,52 +1,52 @@
-import { apply, filter, move, noop, Rule, SchematicContext, Tree, url, template, mergeWith, MergeStrategy, chain } from '@angular-devkit/schematics';
+import { apply, move, Rule, SchematicContext, Tree, url, template, mergeWith, chain } from '@angular-devkit/schematics';
 import { normalize, strings } from "@angular-devkit/core";
-import { setupOptions } from "./helper";
+import { HelloSchemaOptions } from './schema';
 
 
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
-export function hello(_options: any): Rule {
+export function hello(_options: HelloSchemaOptions): Rule {
     return (tree: Tree, _context: SchematicContext) => {
-        if (_options.setupProject) {
-            setupOptions(tree, _options);
+
+        const ruleArr = [];
+
+        _context.logger.info(JSON.stringify(_options));
+
+        if (_options["no-list"] === "false") {
+            // this is the path where the created files will be moved
+            const movePathForList = (_options.path) ?
+                normalize(`${_options.path}/${strings.dasherize(_options.name)}/${strings.dasherize(_options.name)}-list`) :
+                normalize(`/modules/${strings.dasherize(_options.name)}/${strings.dasherize(_options.name)}-list`);
+
+
+            // create files using Schematics
+            const templateSourceForList = apply(url('./files/list'), [
+                template({
+                    ...strings,
+                    ..._options,
+                }),
+                move(movePathForList)
+            ]);
+
+            ruleArr.push(mergeWith(templateSourceForList));
         }
 
-        // this is the path where the created files will be moved
-        const movePath = (_options.flat) ?
-            normalize(_options.path) :
-            normalize(_options.path + '/' + strings.dasherize(_options.name));
+
+        const movePathForModule = normalize(`${_options.path || '/modules'}/${strings.dasherize(_options.name)}`)
 
 
-        // create files using Schematics
-        const templateSource = apply(url('./files/test'), [
-            _options.spec ? filter(path => !path.endsWith('.spec.ts')) : noop(),
+        const templateSourceForModule = apply(url('./files/module'), [
             template({
                 ...strings,
                 ..._options,
             }),
-            move(movePath)
-        ]);
-
-        const rule = mergeWith(templateSource, MergeStrategy.Default);
-
-
-
-
-        const movePath2 = normalize(_options.path + '/25Path/' + strings.dasherize(_options.name));
-
-        const templateSource2 = apply(url('./files'), [
-            _options.spec ? filter(path => !path.endsWith('.spec.ts')) : noop(),
-            template({
-                ...strings,
-                ..._options,
-            }),
-            move(movePath2)
+            move(movePathForModule)
         ]);
 
         // apply the staged changes to the tree with Rule
-        const rule2 = mergeWith(templateSource2, MergeStrategy.Default)
+        ruleArr.push(mergeWith(templateSourceForModule));
 
-        const rules = chain([rule, rule2])(tree, _context);
-        return rules
+        return chain(ruleArr);
+        
     };
 }

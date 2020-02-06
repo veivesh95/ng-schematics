@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "id": "SchematicsMyBexoModule",
+    "title": "Bexo generator",
+    "type": "object",
+    "properties": {
+        "name": {
+            "description": "The name of the service.",
+            "type": "string"
+        },
+        "path": {
+            "type": "string",
+            "format": "path",
+            "description": "The path to create the service."
+        },
+        "no-list": {
+            "type": "string",
+            "description": "List component for the particular module",
+            "$default": false
+        }
+    },
+    "required": [
+        "name"
+    ]
+}

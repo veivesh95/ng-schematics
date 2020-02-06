@@ -9,7 +9,7 @@ import {
   template
 } from "@angular-devkit/schematics";
 import { normalize, strings } from "@angular-devkit/core";
-import { SchemaOptions } from "./scheme";
+import { SchemaOptions } from "./schema";
 
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
